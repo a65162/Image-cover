@@ -10,20 +10,54 @@
     this.background.size = 'cover';
     this.background.attachment = 'scroll';
 
+    /**
+     * [description]
+     * Remove all binding event on this object
+     *
+     * @param  {[type]} selector    [description]
+     *         what selector do you bind event
+     *         on it?
+     * @param  {[type]} event       [description]
+     *         what event do you want to
+     *         remove?
+     * @param  {[type]} specific_id [description]
+     *         This is a namespace which is
+     *         called on binding event.
+     * @return {[type]}             [description]
+     */
+
+    this.CleanAllHandler = function (selector,event,specific_id) {
+      // get all prototype from 'this' object
+      var prototypes = Object.getPrototypeOf(this);
+      for (var prototype in prototypes) {
+        var event_namespace =  event + '.' + prototype + specific_id;
+        $(selector).off(event_namespace);
+      }
+    };
+
     // If it has custom settigns merge it.
     $.extend(this.background, settings);
   };
 
 
 // cover effect
-
-  Image_cover.prototype.cover = function() {
+/**
+ * [description]
+ * @return {[type]} [description]
+ */
+  Image_cover.prototype.Cover = function() {
     var settings = this.background;
     var block = $(this.id);
-    var img = block.find('img');
+    var block_uuid = this.id;
+    Cover_that = this;
+    Cover_block_img = block.find('img');
 
-    img.each(function(index,element) {
+    this.specific_id = [];
+
+    Cover_block_img.each(function(index,element) {
       var this_img = $(element);
+      Cover_that.specific_id[index] = block_uuid+index;
+
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
         var img_Height = this.height;
         this_img.css('display', 'none').parent().css({
@@ -34,7 +68,7 @@
           'background-image': 'url(' + this_img.attr('src') + ')',
           'display': 'block',
           'height': img_Height
-        });
+        }).addClass('image-cover-processed');
       });
     });
   };
@@ -42,29 +76,30 @@
 
 
   // Set custom Height
+  /**
+   * [description]
+   * @param  {[type]} custom_Height [description]
+   * @param  {[type]} ratio         [description]
+   * @return {[type]}               [description]
+   */
+  Image_cover.prototype.SetHeight = function( custom_Height , ratio ) {
 
-  Image_cover.prototype.setHeight = function( custom_Height , ratio ) {
-    var block = $(this.id);
-    var block_uuid = this.id;
-    var img = block.find('img');
-    var that = this;
-
-    img.each(function(index,element) {
+    Cover_block_img.each(function(index,element) {
       var this_img = $(element);
 
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        that.setHeight_responsive(custom_Height,ratio,this_img);
+        Cover_that.SetHeight_Responsive(custom_Height,ratio,this_img);
 
-        // Whather same event is exixting, it'll remove it.
-        $(window).off('resize.setHeight'+ index + block_uuid );
+        // Clean All handler
+        Cover_that.CleanAllHandler(window,'resize', Cover_that.specific_id[index]);
 
-        $(window).on('resize.setHeight'+ index + block_uuid,function() {
-          that.setHeight_responsive(custom_Height,ratio,this_img);
+        $(window).on('resize.SetHeight'+ Cover_that.specific_id[index],function() {
+          Cover_that.SetHeight_Responsive(custom_Height,ratio,this_img);
         });
       });
     });
 
-    this.setHeight_responsive = function(a,b,c) {
+    this.SetHeight_Responsive = function(a,b,c) {
       if (a > $(window).height()) {
         var Height = a * b;
         c.parent().css({
@@ -82,26 +117,28 @@
 
 
   // using device height
-  Image_cover.prototype.device_height = function() {
-    var block = $(this.id);
-    var block_uuid = this.id;
-    var img = block.find('img');
-    var that = this;
-
-    img.each(function(index,element) {
+  /**
+   * [description]
+   * @return {[type]} [description]
+   */
+  Image_cover.prototype.Device_Height = function() {
+    Cover_block_img.each(function(index,element) {
       var this_img = $(element);
+
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        that.device_height_responsive(this_img);
-        // Whather same event is exixting, it'll remove it.
-        $(window).off('resize.device_height'+ index + block_uuid);
-        $(window).on('resize.device_height'+ index + block_uuid , function() {
-            that.device_height_responsive(this_img);
+        Cover_that.Device_Height_Responsive(this_img);
+
+        // Clean All handler
+        Cover_that.CleanAllHandler(window,'resize', Cover_that.specific_id[index]);
+
+        $(window).on('resize.Device_Height'+ Cover_that.specific_id[index] , function() {
+            Cover_that.Device_Height_Responsive(this_img);
         });
       });
     });
 
 
-    this.device_height_responsive = function(a) {
+    this.Device_Height_Responsive = function(a) {
       a.parent().css({
         'height' : $(window).height(),
       });
@@ -110,21 +147,20 @@
 
 
   // remove all effect
-  //
-  Image_cover.prototype.remove_cover = function() {
-    var block = $(this.id);
-    var block_uuid = this.id;
-    var img = block.find('img');
-
-    img.each(function(index,element) {
+  /**
+   * [description]
+   * @return {[type]} [description]
+   */
+  Image_cover.prototype.Remove_Cover = function() {
+    Cover_block_img.each(function(index,element) {
       var this_img = $(element);
 
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        this_img.css('display','block').parent().removeAttr('style');
-        $(window).off('resize.setHeight'+ index + block_uuid);
-        $(window).off('resize.device_height'+ index + block_uuid);
+        this_img.css('display','block').parent().removeAttr('style').removeClass('image-cover-processed');
+
+        // Clean All handler
+        Cover_that.CleanAllHandler(window,'resize', Cover_that.specific_id[index]);
       });
     });
   };
-
 })(jQuery);
