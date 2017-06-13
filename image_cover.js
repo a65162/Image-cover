@@ -35,32 +35,47 @@
       }
     };
 
-    // If it has custom settigns merge it.
+    // this.AddHandler = function (selector,event,prototype,specific_id) {
+    //   var events = $(selector).data('events');
+    //   var event_namespace =  event + '.' + prototype + specific_id;
+    //
+    //   $.each(events, function(key,value) {
+    //     if(key === event) {
+    //       var namespaces = value;
+    //       $.each(namespaces , function(key,value) {
+    //         if(value.namespace === event_namespace ) {
+    //             return false;
+    //         }
+    //       });
+    //       console.log('asdasd');
+    //     }
+    //   });
+    // };
+    // If it has custom settigns, then merging it.
     $.extend(this.background, settings);
   };
 
 
-// cover effect
 /**
- * [description]
+ * Cover
  * @return {[type]} [description]
  */
   Image_cover.prototype.Cover = function() {
     var settings = this.background;
     var block = $(this.id);
     var block_uuid = this.id;
-    Cover_that = this;
-    Cover_block_img = block.find('img');
+    var that = this;
+    var Cover_block_img = block.find('img');
 
     this.specific_id = [];
 
     Cover_block_img.each(function(index,element) {
       var this_img = $(element);
-      Cover_that.specific_id[index] = block_uuid+index;
+      that.specific_id[index] = block_uuid+index;
 
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
         var img_Height = this.height;
-        this_img.css('display', 'none').parent().css({
+        this_img.css('display', 'none').parent().not('.image-cover-processed').css({
           'background-position': settings.position,
           'background-repeat': settings.repeat,
           'background-size': settings.size,
@@ -74,27 +89,29 @@
   };
 
 
-
-  // Set custom Height
   /**
-   * [description]
+   * SetHeight
    * @param  {[type]} custom_Height [description]
    * @param  {[type]} ratio         [description]
    * @return {[type]}               [description]
    */
   Image_cover.prototype.SetHeight = function( custom_Height , ratio ) {
+    var block = $(this.id);
+    var Cover_block_img = block.find('img');
+    var that = this;
 
     Cover_block_img.each(function(index,element) {
       var this_img = $(element);
+      var uuid = that.specific_id[index];
 
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        Cover_that.SetHeight_Responsive(custom_Height,ratio,this_img);
+        that.SetHeight_Responsive(custom_Height,ratio,this_img);
 
         // Clean All handler
-        Cover_that.CleanAllHandler(window,'resize', Cover_that.specific_id[index]);
+        that.CleanAllHandler(window,'resize', uuid);
 
-        $(window).on('resize.SetHeight'+ Cover_that.specific_id[index],function() {
-          Cover_that.SetHeight_Responsive(custom_Height,ratio,this_img);
+        $(window).on('resize.SetHeight'+ uuid,function() {
+          that.SetHeight_Responsive(custom_Height,ratio,this_img);
         });
       });
     });
@@ -102,11 +119,11 @@
     this.SetHeight_Responsive = function(a,b,c) {
       if (a > $(window).height()) {
         var Height = a * b;
-        c.parent().css({
+        c.parent('.image-cover-processed').css({
           'height': Height
         });
       } else {
-        c.parent().css({
+        c.parent('.image-cover-processed').css({
           'height': a
         });
       }
@@ -114,53 +131,95 @@
   };
 
 
-
-
-  // using device height
   /**
-   * [description]
+   * DeviceHeight
    * @return {[type]} [description]
    */
-  Image_cover.prototype.Device_Height = function() {
+  Image_cover.prototype.DeviceHeight = function() {
+    var block = $(this.id);
+    var Cover_block_img = block.find('img');
+    var that = this;
+
     Cover_block_img.each(function(index,element) {
       var this_img = $(element);
+      var uuid = that.specific_id[index];
 
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        Cover_that.Device_Height_Responsive(this_img);
+        that.Device_Height_Responsive(this_img);
 
         // Clean All handler
-        Cover_that.CleanAllHandler(window,'resize', Cover_that.specific_id[index]);
+        that.CleanAllHandler(window,'resize', uuid);
 
-        $(window).on('resize.Device_Height'+ Cover_that.specific_id[index] , function() {
-            Cover_that.Device_Height_Responsive(this_img);
+        $(window).on('resize.DeviceHeight'+ uuid , function() {
+            that.Device_Height_Responsive(this_img);
         });
       });
     });
 
 
     this.Device_Height_Responsive = function(a) {
-      a.parent().css({
+      a.parent('.image-cover-processed').css({
         'height' : $(window).height(),
       });
     };
   };
 
 
-  // remove all effect
   /**
-   * [description]
+   * RemoveCover
    * @return {[type]} [description]
    */
-  Image_cover.prototype.Remove_Cover = function() {
+  Image_cover.prototype.RemoveCover = function() {
+    var block = $(this.id);
+    var Cover_block_img = block.find('img');
+    var that = this;
+
     Cover_block_img.each(function(index,element) {
       var this_img = $(element);
+      var uuid = that.specific_id[index];
 
       $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        this_img.css('display','block').parent().removeAttr('style').removeClass('image-cover-processed');
+        this_img.css('display','block').parent('.image-cover-processed').removeAttr('style').removeClass('image-cover-processed');
 
         // Clean All handler
-        Cover_that.CleanAllHandler(window,'resize', Cover_that.specific_id[index]);
+        that.CleanAllHandler(window,'resize', uuid);
       });
     });
+  };
+
+  /**
+   * ElSameHeight
+   * @param  {[type]} El [description]
+   * @return {[type]}    [description]
+   */
+
+  Image_cover.prototype.ElSameHeight = function (El) {
+    var block = $(this.id);
+    var Cover_block_img = block.find('img');
+    var that = this;
+
+    Cover_block_img.each(function(index,element) {
+      var this_img = $(element);
+      var Els = $(El).eq(index);
+      var uuid = that.specific_id[index];
+
+      $("<img/>").attr('src', this_img.attr('src')).load(function() {
+        that.ElSameHeight_Responsive(this_img,Els);
+
+        // Clean All handler
+        that.CleanAllHandler(window,'resize', uuid);
+
+
+        $(window).on('resize.ElSameHeight'+ uuid , function() {
+            that.ElSameHeight_Responsive(this_img,Els);
+        });
+      });
+    });
+
+    this.ElSameHeight_Responsive = function(a,b) {
+      a.parent('.image-cover-processed').css({
+        'height' : b.innerHeight(),
+      });
+    };
   };
 })(jQuery);
