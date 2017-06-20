@@ -26,11 +26,11 @@
      * @return {[type]}             [description]
      */
 
-    this.CleanAllHandler = function (selector,event,specific_id) {
+    this.CleanAllHandler = function(selector, event, specific_id) {
       // get all prototype from 'this' object
       var prototypes = Object.getPrototypeOf(this);
       for (var prototype in prototypes) {
-        var event_namespace =  event + '.' + prototype + specific_id;
+        var event_namespace = event + '.' + prototype + specific_id;
         $(selector).off(event_namespace);
       }
     };
@@ -51,15 +51,16 @@
     //     }
     //   });
     // };
+
     // If it has custom settigns, then merging it.
     $.extend(this.background, settings);
   };
 
 
-/**
- * Cover
- * @return {[type]} [description]
- */
+  /**
+   * Cover
+   * @return {[type]} [description]
+   */
   Image_cover.prototype.Cover = function() {
     var settings = this.background;
     var block = $(this.id);
@@ -69,22 +70,19 @@
 
     this.specific_id = [];
 
-    Cover_block_img.each(function(index,element) {
-      var this_img = $(element);
-      that.specific_id[index] = block_uuid+index;
+    Cover_block_img.each(function(index, element) {
+      var naturalHeight = this.naturalHeight;
+      that.specific_id[index] = block_uuid + index;
 
-      $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        var img_Height = this.height;
-        this_img.css('display', 'none').parent().not('.image-cover-processed').css({
-          'background-position': settings.position,
-          'background-repeat': settings.repeat,
-          'background-size': settings.size,
-          'background-attachment': settings.attachment,
-          'background-image': 'url(' + this_img.attr('src') + ')',
-          'display': 'block',
-          'height': img_Height
-        }).addClass('image-cover-processed');
-      });
+      $(this).css('display', 'none').parent().not('.image-cover-processed').css({
+        'background-position': settings.position,
+        'background-repeat': settings.repeat,
+        'background-size': settings.size,
+        'background-attachment': settings.attachment,
+        'background-image': 'url(' + $(this).attr('src') + ')',
+        'display': 'block',
+        'height': naturalHeight
+      }).addClass('image-cover-processed');
     });
   };
 
@@ -95,28 +93,13 @@
    * @param  {[type]} ratio         [description]
    * @return {[type]}               [description]
    */
-  Image_cover.prototype.SetHeight = function( custom_Height , ratio ) {
+  Image_cover.prototype.SetHeight = function(custom_Height, ratio) {
     var block = $(this.id);
     var Cover_block_img = block.find('img');
     var that = this;
+    that.Cover();
 
-    Cover_block_img.each(function(index,element) {
-      var this_img = $(element);
-      var uuid = that.specific_id[index];
-
-      $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        that.SetHeight_Responsive(custom_Height,ratio,this_img);
-
-        // Clean All handler
-        that.CleanAllHandler(window,'resize', uuid);
-
-        $(window).on('resize.SetHeight'+ uuid,function() {
-          that.SetHeight_Responsive(custom_Height,ratio,this_img);
-        });
-      });
-    });
-
-    this.SetHeight_Responsive = function(a,b,c) {
+    that.SetHeight_Responsive = function(a, b, c) {
       if (a > $(window).height()) {
         var Height = a * b;
         c.parent('.image-cover-processed').css({
@@ -128,6 +111,20 @@
         });
       }
     };
+
+    Cover_block_img.each(function(index, element) {
+      var uuid = that.specific_id[index];
+      var img = $(this);
+
+      that.SetHeight_Responsive(custom_Height, ratio, img);
+
+      // Clean All handler
+      that.CleanAllHandler(window, 'resize', uuid);
+
+      $(window).on('resize.SetHeight' + uuid, function() {
+        that.SetHeight_Responsive(custom_Height, ratio, img);
+      });
+    });
   };
 
 
@@ -139,29 +136,27 @@
     var block = $(this.id);
     var Cover_block_img = block.find('img');
     var that = this;
+    that.Cover();
 
-    Cover_block_img.each(function(index,element) {
-      var this_img = $(element);
-      var uuid = that.specific_id[index];
-
-      $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        that.Device_Height_Responsive(this_img);
-
-        // Clean All handler
-        that.CleanAllHandler(window,'resize', uuid);
-
-        $(window).on('resize.DeviceHeight'+ uuid , function() {
-            that.Device_Height_Responsive(this_img);
-        });
-      });
-    });
-
-
-    this.Device_Height_Responsive = function(a) {
+    that.Device_Height_Responsive = function(a) {
       a.parent('.image-cover-processed').css({
-        'height' : $(window).height(),
+        'height': $(window).height(),
       });
     };
+
+    Cover_block_img.each(function(index, element) {
+      var uuid = that.specific_id[index];
+      var img = $(this);
+
+      that.Device_Height_Responsive(img);
+
+      // Clean All handler
+      that.CleanAllHandler(window, 'resize', uuid);
+
+      $(window).on('resize.DeviceHeight' + uuid, function() {
+        that.Device_Height_Responsive(img);
+      });
+    });
   };
 
 
@@ -174,16 +169,16 @@
     var Cover_block_img = block.find('img');
     var that = this;
 
-    Cover_block_img.each(function(index,element) {
-      var this_img = $(element);
+    Cover_block_img.each(function(index, element) {
       var uuid = that.specific_id[index];
 
-      $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        this_img.css('display','block').parent('.image-cover-processed').removeAttr('style').removeClass('image-cover-processed');
+      $(this).css('display', 'block')
+          .parent('.image-cover-processed')
+          .removeAttr('style')
+          .removeClass('image-cover-processed');
 
-        // Clean All handler
-        that.CleanAllHandler(window,'resize', uuid);
-      });
+      // Clean All handler
+      that.CleanAllHandler(window, 'resize', uuid);
     });
   };
 
@@ -193,33 +188,31 @@
    * @return {[type]}    [description]
    */
 
-  Image_cover.prototype.ElSameHeight = function (El) {
+  Image_cover.prototype.ElSameHeight = function(El) {
     var block = $(this.id);
     var Cover_block_img = block.find('img');
     var that = this;
+    that.Cover();
 
-    Cover_block_img.each(function(index,element) {
-      var this_img = $(element);
-      var Els = $(El).eq(index);
-      var uuid = that.specific_id[index];
-
-      $("<img/>").attr('src', this_img.attr('src')).load(function() {
-        that.ElSameHeight_Responsive(this_img,Els);
-
-        // Clean All handler
-        that.CleanAllHandler(window,'resize', uuid);
-
-
-        $(window).on('resize.ElSameHeight'+ uuid , function() {
-            that.ElSameHeight_Responsive(this_img,Els);
-        });
-      });
-    });
-
-    this.ElSameHeight_Responsive = function(a,b) {
+    that.ElSameHeight_Responsive = function(a, b) {
       a.parent('.image-cover-processed').css({
-        'height' : b.innerHeight(),
+        'height': b.innerHeight(),
       });
     };
+
+    Cover_block_img.each(function(index, element) {
+      var Els = $(El).eq(index);
+      var uuid = that.specific_id[index];
+      var img = $(this);
+
+      that.ElSameHeight_Responsive(img, Els);
+
+      // Clean All handler
+      that.CleanAllHandler(window, 'resize', uuid);
+
+      $(window).on('resize.ElSameHeight' + uuid, function() {
+        that.ElSameHeight_Responsive(img, Els);
+      });
+    });
   };
 })(jQuery);
