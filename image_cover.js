@@ -59,7 +59,7 @@
 
   /**
    * Cover
-   * @return {[type]} [description]
+   * Basic method that use original img height settles all background properties.
    */
   Image_cover.prototype.Cover = function() {
     var settings = this.background;
@@ -93,7 +93,7 @@
    * @param  {[type]} ratio         [description]
    * @return {[type]}               [description]
    */
-  Image_cover.prototype.SetHeight = function(custom_Height, ratio) {
+  Image_cover.prototype.SetHeight = function(args) {
     var block = $(this.id);
     var Cover_block_img = block.find('img');
     var that = this;
@@ -116,13 +116,14 @@
       var uuid = that.specific_id[index];
       var img = $(this);
 
-      that.SetHeight_Responsive(custom_Height, ratio, img);
+      that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
 
       // Clean All handler
       that.CleanAllHandler(window, 'resize', uuid);
 
       $(window).on('resize.SetHeight' + uuid, function() {
-        that.SetHeight_Responsive(custom_Height, ratio, img);
+        console.log('sadsa');
+        that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
       });
     });
   };
@@ -168,6 +169,7 @@
     var block = $(this.id);
     var Cover_block_img = block.find('img');
     var that = this;
+    that.Cover();
 
     Cover_block_img.each(function(index, element) {
       var uuid = that.specific_id[index];
@@ -188,7 +190,7 @@
    * @return {[type]}    [description]
    */
 
-  Image_cover.prototype.ElSameHeight = function(El) {
+  Image_cover.prototype.ElSameHeight = function(args) {
     var block = $(this.id);
     var Cover_block_img = block.find('img');
     var that = this;
@@ -201,7 +203,7 @@
     };
 
     Cover_block_img.each(function(index, element) {
-      var Els = $(El).eq(index);
+      var Els = $(args.El).eq(index);
       var uuid = that.specific_id[index];
       var img = $(this);
 
@@ -215,4 +217,31 @@
       });
     });
   };
+
+
+
+  // plugin defintion.
+  $.fn.ImageCover = function (bg_settings,method,args,fn) {
+
+    if(typeof method !== 'string' || !Image_cover.prototype.hasOwnProperty(method)) {
+      throw 'Pleas given correct method';
+    }
+
+    if(Image_cover.prototype[method].length === 0) {
+      args = null;
+    }else if(args === undefined || typeof args !=='object') {
+      throw 'Pleas given correct args';
+    }
+
+    if(this.selector !== '') {
+      throw 'Pleas given a selector(Id or ClassName)';
+    }
+
+    var Cover = new Image_cover(this.selector,bg_settings);
+    Cover[method](args);
+
+    return $.isFunction(fn) ? this.each(fn) : this;
+   };
+
+
 })(jQuery);
