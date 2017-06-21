@@ -163,7 +163,8 @@
 
   /**
    * RemoveCover
-   * @return {[type]} [description]
+   *
+   * remove all background effect
    */
   Image_cover.prototype.RemoveCover = function() {
     var block = $(this.id);
@@ -224,7 +225,7 @@
   $.fn.ImageCover = function (bg_settings,method,args,fn) {
 
     if(typeof method !== 'string' || !Image_cover.prototype.hasOwnProperty(method)) {
-      throw 'Pleas given correct method';
+      method = 'Cover';
     }
 
     if(Image_cover.prototype[method].length === 0) {
@@ -233,7 +234,7 @@
       throw 'Pleas given correct args';
     }
 
-    if(this.selector !== '') {
+    if(this.selector === '') {
       throw 'Pleas given a selector(Id or ClassName)';
     }
 
