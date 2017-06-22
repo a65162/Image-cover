@@ -3,7 +3,7 @@
   /**
    * [Image_cover description]
    * @param       {[Object|String]} id - It needs a target(id or ClassName or jQuery Object)
-   * @param       {[Object]} settings - 
+   * @param       {[Object]} settings -
    * @constructor
    */
   function Image_cover(id, settings) {
@@ -91,7 +91,7 @@
    *
    * You can set custom height for your image.
    *
-   * @param  {[Object]} args - it contains two parameters.
+   * @param  {[Object]} args - it is contains of two parameters.
    * @param  {[String]} args.custom_Height -
    * @param  {[String]} args.ratio -
    */
@@ -258,17 +258,17 @@
     if(Image_cover.prototype[method].length === 0) {
       args = null;
     }else if(args === undefined || typeof args !=='object') {
-      throw 'Pleas given correct args';
+      throw 'Please give a correct args';
     }
 
     // If user doesn't give selector, it'll throw a error message.
     if(this.selector === '') {
-      throw 'Pleas given a selector(Id or ClassName)';
+      throw 'Please give a selector(Id or ClassName)';
     }
 
 
-    var Cover = new Image_cover(this.selector,bg_settings);
-    Cover[method](args);
+    this.Image_cover = new Image_cover(this.selector,bg_settings);
+    this.Image_cover[method](args);
 
     return $.isFunction(fn) ? this.each(fn) : this;
    };
