@@ -1,6 +1,12 @@
 (function($) {
 
-  Image_cover = function(id, settings) {
+  /**
+   * [Image_cover description]
+   * @param       {[Object|String]} id - It needs a target(id or ClassName or jQuery Object)
+   * @param       {[Object]} settings - 
+   * @constructor
+   */
+  function Image_cover(id, settings) {
 
     // Default settings
     this.id = id;
@@ -11,21 +17,13 @@
     this.background.attachment = 'scroll';
 
     /**
-     * [Description]
+     * CleanAllHandler
      * Remove all binding event on this object
      *
-     * @param  {[type]} selector    [description]
-     *         what selector do you bind event
-     *         on it?
-     * @param  {[type]} event       [description]
-     *         what event do you want to
-     *         remove?
-     * @param  {[type]} specific_id [description]
-     *         This is a namespace which is
-     *         called on binding event.
-     * @return {[type]}             [description]
+     * @param  {[String|Object]} selector - what selector do you bind event on it?
+     * @param  {[String]} event - what event do you want to remove?
+     * @param  {[String]} specific_id - This is a namespace which is called on binding event.
      */
-
     this.CleanAllHandler = function(selector, event, specific_id) {
       // get all prototype from 'this' object
       var prototypes = Object.getPrototypeOf(this);
@@ -54,7 +52,7 @@
 
     // If it has custom settigns, then merging it.
     $.extend(this.background, settings);
-  };
+  }
 
 
   /**
@@ -93,8 +91,9 @@
    *
    * You can set custom height for your image.
    *
-   * @param  args contains two parameters called
-   *         custom_Height and ratio.
+   * @param  {[Object]} args - it contains two parameters.
+   * @param  {[String]} args.custom_Height -
+   * @param  {[String]} args.ratio -
    */
   Image_cover.prototype.SetHeight = function(args) {
     var block = $(this.id);
@@ -102,6 +101,13 @@
     var that = this;
     that.Cover();
 
+    /**
+     * SetHeight_Responsive
+     *
+     * @param  {[type]} a [description]
+     * @param  {[type]} b [description]
+     * @param  {[String|Object]} c - It's a jQuery selector.
+     */
     that.SetHeight_Responsive = function(a, b, c) {
       if (a > $(window).height()) {
         var Height = a * b;
@@ -125,7 +131,6 @@
       that.CleanAllHandler(window, 'resize', uuid);
 
       $(window).on('resize.SetHeight' + uuid, function() {
-        console.log('sadsa');
         that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
       });
     });
@@ -144,6 +149,11 @@
     var that = this;
     that.Cover();
 
+    /**
+     * Device_Height_Responsive
+     *
+     * @param  {[String|Object]} a - It's a jQuery selector.
+     */
     that.Device_Height_Responsive = function(a) {
       a.parent('.image-cover-processed').css({
         'height': $(window).height(),
@@ -195,7 +205,8 @@
    *
    * You can let image equal height with specific element.
    *
-   * @param  args has one parameter called El.
+   * @param {[Object]} args - it contains a parameter.
+   * @param {[String]} args.El -
    */
 
   Image_cover.prototype.ElSameHeight = function(args) {
@@ -204,6 +215,12 @@
     var that = this;
     that.Cover();
 
+    /**
+     * ElSameHeight_Responsive
+     *
+     * @param  {[String|Object]} a [description]
+     * @param  {[String|Object]} b [description]
+     */
     that.ElSameHeight_Responsive = function(a, b) {
       a.parent('.image-cover-processed').css({
         'height': b.innerHeight(),
@@ -249,7 +266,7 @@
       throw 'Pleas given a selector(Id or ClassName)';
     }
 
-    
+
     var Cover = new Image_cover(this.selector,bg_settings);
     Cover[method](args);
 
