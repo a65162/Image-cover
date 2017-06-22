@@ -11,7 +11,7 @@
     this.background.attachment = 'scroll';
 
     /**
-     * [description]
+     * [Description]
      * Remove all binding event on this object
      *
      * @param  {[type]} selector    [description]
@@ -59,7 +59,8 @@
 
   /**
    * Cover
-   * Basic method that use original img height settles all background properties.
+   * Basic method that use original img height
+   * and settles all background properties.
    */
   Image_cover.prototype.Cover = function() {
     var settings = this.background;
@@ -89,9 +90,11 @@
 
   /**
    * SetHeight
-   * @param  {[type]} custom_Height [description]
-   * @param  {[type]} ratio         [description]
-   * @return {[type]}               [description]
+   *
+   * You can set custom height for your image.
+   *
+   * @param  args contains two parameters called
+   *         custom_Height and ratio.
    */
   Image_cover.prototype.SetHeight = function(args) {
     var block = $(this.id);
@@ -131,7 +134,9 @@
 
   /**
    * DeviceHeight
-   * @return {[type]} [description]
+   *
+   * Using device height to set image height.
+   *
    */
   Image_cover.prototype.DeviceHeight = function() {
     var block = $(this.id);
@@ -187,8 +192,10 @@
 
   /**
    * ElSameHeight
-   * @param  {[type]} El [description]
-   * @return {[type]}    [description]
+   *
+   * You can let image equal height with specific element.
+   *
+   * @param  args has one parameter called El.
    */
 
   Image_cover.prototype.ElSameHeight = function(args) {
@@ -204,7 +211,7 @@
     };
 
     Cover_block_img.each(function(index, element) {
-      var Els = $(args.El).eq(index);
+      var Els = $(args.El).eq(index) || $(args.El).eq(0);
       var uuid = that.specific_id[index];
       var img = $(this);
 
@@ -224,20 +231,25 @@
   // plugin defintion.
   $.fn.ImageCover = function (bg_settings,method,args,fn) {
 
+    // If method is given wrong string, it'll set a default value.
     if(typeof method !== 'string' || !Image_cover.prototype.hasOwnProperty(method)) {
       method = 'Cover';
     }
 
+    // Whether method has no argument, it'll let args had null.
+    // If args is not object or undefined, it'll throw a erroe message.
     if(Image_cover.prototype[method].length === 0) {
       args = null;
     }else if(args === undefined || typeof args !=='object') {
       throw 'Pleas given correct args';
     }
 
+    // If user doesn't give selector, it'll throw a error message.
     if(this.selector === '') {
       throw 'Pleas given a selector(Id or ClassName)';
     }
 
+    
     var Cover = new Image_cover(this.selector,bg_settings);
     Cover[method](args);
 
