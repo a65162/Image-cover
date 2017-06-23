@@ -24,16 +24,16 @@
      * CleanAllHandler
      * Remove all binding event on this object
      *
-     * @param  {[String]} event - what event do you want to remove?
      * @param  {[String|Object]} selector - what selector do you bind event on it?
-     * @param  {{String}} uuid -
+     * @param  {[String]} event - what event do you want to remove?
+     * @param  {[String]} specific_id - This is a namespace which is called on binding event.
      */
-    this.CleanAllHandler = function(event , selector ,uuid) {
+    this.CleanAllHandler = function(selector, event, specific_id) {
       // get all prototype from 'this' object
       var prototypes = Object.getPrototypeOf(this);
       for (var prototype in prototypes) {
-        var event_namespace = event + '.' + prototype + uuid;
-        $(window).off(event_namespace,selector);
+        var event_namespace = event + '.' + prototype + specific_id;
+        $(selector).off(event_namespace);
       }
     };
 
@@ -67,11 +67,15 @@
   Image_cover.prototype.Cover = function() {
     var settings = this.background;
     var block = $(this.id);
+    var block_uuid = this.id;
     var that = this;
     var Cover_block_img = block.find('img');
 
+    this.specific_id = [];
+
     Cover_block_img.each(function(index, element) {
       var naturalHeight = this.naturalHeight;
+      that.specific_id[index] = block_uuid + index;
 
       $(this).css('display', 'none').parent().not('.image-cover-processed').css({
         'background-position': settings.position,
@@ -122,14 +126,15 @@
     };
 
     Cover_block_img.each(function(index, element) {
+      var uuid = that.specific_id[index];
       var img = $(this);
 
       that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
 
       // Clean All handler
-      that.CleanAllHandler('resize', block , index);
+      that.CleanAllHandler(window, 'resize', uuid);
 
-      $(window).on('resize.SetHeight'+index, block ,function() {
+      $(window).on('resize.SetHeight' + uuid, function() {
         that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
       });
     });
@@ -160,14 +165,15 @@
     };
 
     Cover_block_img.each(function(index, element) {
+      var uuid = that.specific_id[index];
       var img = $(this);
 
       that.Device_Height_Responsive(img);
 
       // Clean All handler
-      that.CleanAllHandler('resize', block ,index);
+      that.CleanAllHandler(window, 'resize', uuid);
 
-      $(window).on('resize.DeviceHeight'+index, block ,function() {
+      $(window).on('resize.DeviceHeight' + uuid, function() {
         that.Device_Height_Responsive(img);
       });
     });
@@ -183,8 +189,10 @@
     var block = $(this.id);
     var Cover_block_img = block.find('img');
     var that = this;
+    that.Cover();
 
     Cover_block_img.each(function(index, element) {
+      var uuid = that.specific_id[index];
 
       $(this).css('display', 'block')
           .parent('.image-cover-processed')
@@ -192,7 +200,7 @@
           .removeClass('image-cover-processed');
 
       // Clean All handler
-      that.CleanAllHandler('resize', block ,index);
+      that.CleanAllHandler(window, 'resize', uuid);
     });
   };
 
@@ -225,14 +233,15 @@
 
     Cover_block_img.each(function(index, element) {
       var Els = $(args.El).eq(index) || $(args.El).eq(0);
+      var uuid = that.specific_id[index];
       var img = $(this);
 
       that.ElSameHeight_Responsive(img, Els);
 
       // Clean All handler
-      that.CleanAllHandler('resize', block ,index);
+      that.CleanAllHandler(window, 'resize', uuid);
 
-      $(window).on('resize.ElSameHeight'+ index, block ,function() {
+      $(window).on('resize.ElSameHeight' + uuid, function() {
         that.ElSameHeight_Responsive(img, Els);
       });
     });
@@ -255,6 +264,12 @@
     }else if(args === undefined || typeof args !=='object') {
       throw 'Please give a correct args';
     }
+
+    // If user doesn't give selector, it'll throw a error message.
+    if(this.selector === '') {
+      throw 'Please give a selector(Id or ClassName)';
+    }
+
 
     this.Image_cover = new Image_cover(this.selector,bg_settings);
     this.Image_cover[method](args);
