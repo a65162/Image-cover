@@ -26,12 +26,13 @@
      *
      * @param  {[String|Object]} selector - what selector do you bind event on it?
      * @param  {[String]} event - what event do you want to remove?
+     * @param  {{String}} uuid
      */
-    this.CleanAllHandler = function(selector, event ) {
+    this.CleanAllHandler = function(selector, event , uuid) {
       // get all prototype from 'this' object
       var prototypes = Object.getPrototypeOf(this);
       for (var prototype in prototypes) {
-        var event_namespace = event + '.' + prototype;
+        var event_namespace = event + '.' + prototype + uuid;
         $(selector).off(event_namespace);
       }
     };
@@ -66,7 +67,6 @@
   Image_cover.prototype.Cover = function() {
     var settings = this.background;
     var block = $(this.id);
-    var block_uuid = this.id;
     var that = this;
     var Cover_block_img = block.find('img');
 
@@ -127,9 +127,9 @@
       that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
 
       // Clean All handler
-      that.CleanAllHandler(block, 'resize');
+      that.CleanAllHandler(block, 'resize',index);
 
-      $(block).on('resize.SetHeight', function() {
+      $(block).on('resize.SetHeight'+index, function() {
         that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
       });
     });
@@ -165,9 +165,9 @@
       that.Device_Height_Responsive(img);
 
       // Clean All handler
-      that.CleanAllHandler(block, 'resize');
+      that.CleanAllHandler(block, 'resize' ,index);
 
-      $(block).on('resize.DeviceHeight', function() {
+      $(block).on('resize.DeviceHeight'+index, function() {
         that.Device_Height_Responsive(img);
       });
     });
@@ -192,7 +192,7 @@
           .removeClass('image-cover-processed');
 
       // Clean All handler
-      that.CleanAllHandler(block, 'resize');
+      that.CleanAllHandler(block, 'resize' ,index);
     });
   };
 
@@ -230,9 +230,9 @@
       that.ElSameHeight_Responsive(img, Els);
 
       // Clean All handler
-      that.CleanAllHandler(block, 'resize');
+      that.CleanAllHandler(block, 'resize', index);
 
-      $(block).on('resize.ElSameHeight', function() {
+      $(block).on('resize.ElSameHeight'+ index, function() {
         that.ElSameHeight_Responsive(img, Els);
       });
     });
