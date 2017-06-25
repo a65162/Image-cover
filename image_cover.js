@@ -102,6 +102,8 @@
   Image_cover.prototype.SetHeight = function(args) {
     var block = $(this.id);
     var Cover_block_img = block.find('img');
+    var custom_Height = args.custom_Height;
+    var ratio = args.ratio;
     var that = this;
     that.Cover();
 
@@ -129,13 +131,13 @@
       var uuid = that.specific_id[index];
       var img = $(this);
 
-      that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
+      that.SetHeight_Responsive(custom_Height, ratio , img);
 
       // Clean All handler
       that.CleanAllHandler(window, 'resize', uuid);
 
       $(window).on('resize.SetHeight' + uuid, function() {
-        that.SetHeight_Responsive(args.custom_Height, args.ratio, img);
+        that.SetHeight_Responsive(custom_Height, ratio , img);
       });
     });
   };
@@ -216,6 +218,7 @@
   Image_cover.prototype.ElSameHeight = function(args) {
     var block = $(this.id);
     var Cover_block_img = block.find('img');
+    var El = args.El;
     var that = this;
     that.Cover();
 
@@ -232,17 +235,17 @@
     };
 
     Cover_block_img.each(function(index, element) {
-      var Els = $(args.El).eq(index) || $(args.El).eq(0);
+      var target = $(El).eq(index) || $(El).eq(0);
       var uuid = that.specific_id[index];
       var img = $(this);
 
-      that.ElSameHeight_Responsive(img, Els);
+      that.ElSameHeight_Responsive(img, target);
 
       // Clean All handler
       that.CleanAllHandler(window, 'resize', uuid);
 
       $(window).on('resize.ElSameHeight' + uuid, function() {
-        that.ElSameHeight_Responsive(img, Els);
+        that.ElSameHeight_Responsive(img, target);
       });
     });
   };
