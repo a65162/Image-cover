@@ -2,7 +2,7 @@
 
   /**
    * [Image_cover description]
-   * @param       {[Object|String]} id - It needs a target(id or ClassName or jQuery Object)
+   * @param       {[Object|String]} id - It needs a target(id or ClassName)
    * @param       {[Object]} settings - CSS background settings
    * @param       {[String]} settings.position - background-position
    * @param       {[String]} settings.repeat - background-repeat
@@ -95,9 +95,9 @@
    *
    * You can set custom height for your image.
    *
-   * @param  {[Object]} args - it is contains of two parameters.
-   * @param  {[String]} args.custom_Height -
-   * @param  {[String]} args.ratio -
+   * @param  {[Object]} args - it is contains two parameters.
+   * @param  {[number]} args.custom_Height - given number to apply on the image.
+   * @param  {[number]} args.ratio - Whether custom_Height is greater than device height, it'll be used.
    */
   Image_cover.prototype.SetHeight = function(args) {
     var block = $(this.id);
@@ -108,9 +108,9 @@
     /**
      * SetHeight_Responsive
      *
-     * @param  {[type]} a [description]
-     * @param  {[type]} b [description]
-     * @param  {[String|Object]} c - It's a jQuery selector.
+     * @param  {[number]} a - given number to apply on the image.
+     * @param  {[number]} b - Whether custom_Height is greater than device height, it'll be used.
+     * @param  {[String|Object]} c - which image do you want to apply?
      */
     that.SetHeight_Responsive = function(a, b, c) {
       if (a > $(window).height()) {
@@ -156,7 +156,7 @@
     /**
      * Device_Height_Responsive
      *
-     * @param  {[String|Object]} a - It's a jQuery selector.
+     * @param  {[String|Object]} a - which image do you want to apply?
      */
     that.Device_Height_Responsive = function(a) {
       a.parent('.image-cover-processed').css({
@@ -210,7 +210,7 @@
    * You can let image equal height with specific element.
    *
    * @param {[Object]} args - it contains a parameter.
-   * @param {[String]} args.El -
+   * @param {[String||Object]} args.El - A selector which let image is equal height with it can be a string or jQuery object.
    */
 
   Image_cover.prototype.ElSameHeight = function(args) {
@@ -222,8 +222,8 @@
     /**
      * ElSameHeight_Responsive
      *
-     * @param  {[String|Object]} a [description]
-     * @param  {[String|Object]} b [description]
+     * @param  {[String|Object]} a - which image do you want to apply?
+     * @param  {[String|Object]} b - A selector which let image is equal height with it can be a string or jQuery object.
      */
     that.ElSameHeight_Responsive = function(a, b) {
       a.parent('.image-cover-processed').css({
