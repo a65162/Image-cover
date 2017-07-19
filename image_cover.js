@@ -268,13 +268,9 @@
       throw 'Please give a correct args';
     }
 
-    // If user doesn't give selector, it'll throw a error message.
-    if(this.selector === '') {
-      throw 'Please give a selector(Id or ClassName)';
-    }
+    var selector = '.' + this[0].classList.value.replace(/\ /g,'.');
 
-
-    this.Image_cover = new Image_cover(this.selector,bg_settings);
+    this.Image_cover = new Image_cover(selector,bg_settings);
     this.Image_cover[method](args);
 
     return $.isFunction(fn) ? this.each(fn) : this;
