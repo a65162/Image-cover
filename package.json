@@ -1,0 +1,27 @@
+{
+  "name": "image-cover",
+  "version": "1.7.0",
+  "description": "It's a simple jQuery plugin used in the specific situations which you want your images has cover' effect. It's based on CSS background.",
+  "main": "image_cover.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a65162/Image-cover.git"
+  },
+  "keywords": [
+    "Image",
+    "Cover",
+    "jQuery"
+  ],
+  "author": "a65162",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/a65162/Image-cover/issues"
+  },
+  "homepage": "https://github.com/a65162/Image-cover#readme",
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}
