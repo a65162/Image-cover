@@ -268,6 +268,10 @@
       throw 'Please give a correct args';
     }
 
+    if(! this.length || ! this.get(0).classList) {
+      return this;
+    }
+    
     var selector = '.' + this[0].classList.value.replace(/\ /g,'.');
 
     this.Image_cover = new Image_cover(selector,bg_settings);
